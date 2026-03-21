@@ -313,10 +313,10 @@ Edit `terraform.tfvars` in Cursor and update with your values:
 # Your AWS region for Lambda functions (should match your database region)
 aws_region = "us-east-1"
 
-# Aurora cluster ARN from Part 5 (leave empty - Terraform will find it automatically)
+# Aurora cluster ARN from Part 5 - populate with the ARN from Part 5  
 aurora_cluster_arn = ""
 
-# Aurora secret ARN from Part 5 (leave empty - Terraform will find it automatically)
+# Aurora secret ARN from Part 5 - populate with the secret from Part 5  
 aurora_secret_arn = ""
 
 # S3 Vectors bucket name from Part 3
@@ -335,8 +335,6 @@ sagemaker_endpoint = "alex-embedding-endpoint"
 polygon_api_key = "your_polygon_api_key_here"
 polygon_plan = "free"
 ```
-
-**Note**: The Aurora ARNs can be left empty - Terraform will automatically find them using data sources. Make sure to update the `vector_bucket` with your actual AWS account ID and add your Polygon API key.
 
 ## Step 6: Deploy Infrastructure
 
