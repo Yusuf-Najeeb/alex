@@ -1,17 +1,16 @@
-// API configuration that works for both local and production environments
+// API configuration that works for both local and production environments.
+// Local dev: falls back to http://localhost:8000.
+// Production (Vercel): set NEXT_PUBLIC_API_URL to your API Gateway URL.
 export const getApiUrl = () => {
-  // In production (static export), use relative path which CloudFront will route to API Gateway
-  // In development, use localhost:8000
-  if (typeof window !== 'undefined') {
-    // Client-side: check if we're on localhost
-    if (window.location.hostname === 'localhost') {
-      return 'http://localhost:8000';
-    } else {
-      // Production: use relative path (CloudFront handles routing /api/* to API Gateway)
-      return '';
-    }
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && envUrl.length > 0) {
+    return envUrl.replace(/\/$/, '');
   }
-  // Server-side during build
+
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'http://localhost:8000';
+  }
+
   return '';
 };
 

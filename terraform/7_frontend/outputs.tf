@@ -1,16 +1,6 @@
-output "cloudfront_url" {
-  description = "CloudFront distribution URL"
-  value       = "https://${aws_cloudfront_distribution.main.domain_name}"
-}
-
 output "api_gateway_url" {
-  description = "API Gateway URL"
+  description = "API Gateway URL (paste this into Vercel as NEXT_PUBLIC_API_URL)"
   value       = aws_apigatewayv2_api.main.api_endpoint
-}
-
-output "s3_bucket_name" {
-  description = "Name of the S3 bucket for frontend"
-  value       = aws_s3_bucket.frontend.id
 }
 
 output "lambda_function_name" {
@@ -22,35 +12,27 @@ output "setup_instructions" {
   description = "Instructions for completing the deployment"
   value = <<-EOT
 
-    ✅ Frontend & API infrastructure deployed successfully!
+    ✅ Backend (API Gateway + Lambda) deployed successfully!
 
-    CloudFront URL: https://${aws_cloudfront_distribution.main.domain_name}
-    API Gateway: ${aws_apigatewayv2_api.main.api_endpoint}
-    S3 Bucket: ${aws_s3_bucket.frontend.id}
+    API Gateway URL: ${aws_apigatewayv2_api.main.api_endpoint}
     Lambda Function: ${aws_lambda_function.api.function_name}
 
     Next steps:
 
-    1. If you deployed manually (not using scripts/deploy.py):
-       a. Build and deploy the frontend:
-          cd frontend
-          npm run build
-          aws s3 sync out/ s3://${aws_s3_bucket.frontend.id}/ --delete
+    1. Copy the API Gateway URL above.
+    2. In your Vercel project settings, set the environment variable:
+         NEXT_PUBLIC_API_URL = ${aws_apigatewayv2_api.main.api_endpoint}
+       Then redeploy the Vercel project.
 
-       b. Invalidate CloudFront cache:
-          aws cloudfront create-invalidation \
-            --distribution-id ${aws_cloudfront_distribution.main.id} \
-            --paths "/*"
+    3. Once you have your Vercel URL (e.g. https://alex-xyz.vercel.app):
+       - Add it to terraform.tfvars in this directory:
+           cors_origins = "http://localhost:3000,https://alex-xyz.vercel.app"
+       - Run `terraform apply` again so the Lambda allows CORS from that origin.
+       - Add the same URL to your Clerk dashboard's allowed origins.
 
-    2. Test the deployment:
-       - Visit: https://${aws_cloudfront_distribution.main.domain_name}
-       - Sign in with Clerk
-       - Check API calls in Network tab
-
-    3. Monitor in AWS Console:
+    4. Monitor in AWS Console:
        - CloudWatch Logs: /aws/lambda/${aws_lambda_function.api.function_name}
        - API Gateway metrics
-       - CloudFront metrics
 
     To destroy: cd scripts && uv run destroy.py
   EOT

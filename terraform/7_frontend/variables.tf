@@ -15,3 +15,9 @@ variable "clerk_issuer" {
   type        = string
   default     = ""  # Not actually used but kept for backwards compatibility
 }
+
+variable "cors_origins" {
+  description = "Comma-separated list of allowed CORS origins for the API Lambda (e.g. http://localhost:3000,https://your-app.vercel.app)"
+  type        = string
+  default     = "http://localhost:3000"
+}
